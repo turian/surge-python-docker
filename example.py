@@ -5,8 +5,5 @@ import sys
 sys.path.append("surge/buildpy/")
 
 import surgepy
-import surgepy.constants as srco
-import numpy as np
-import IPython
 
-surgepy.getVersion()
+print(surgepy.getVersion())

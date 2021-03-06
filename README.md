@@ -9,5 +9,5 @@ docker build -t turian/surge-python-docker .
 
 To run:
 ```
-docker run -it turian/surge-python-docker bash
+docker run -v output:/home/surge/output -it turian/surge-python-docker bash
 ```

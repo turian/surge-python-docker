@@ -31,7 +31,7 @@ RUN apt-get install cmake -y
 #RUN apt-get install -y sudo less bc screen tmux unzip vim wget
 
 # Some of these packages are not totally necessary, but useful nonetheless
-RUN pip3 install --upgrade tqdm ipython numpy
+RUN pip3 install --upgrade tqdm ipython numpy scipy
 
 # remove unused files
 RUN apt-get autoclean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
@@ -49,4 +49,16 @@ RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DBUILD_SURGE_PYTHON_BINDINGS=TRUE -
 RUN cd ~/surge/ && LD_LIBRARY_PATH="/usr/lib/python3.6/config-3.6m-x86_64-linux-gnu/:$LD_LIBRARY_PATH" /usr/bin/cmake --build buildpy --config Release --target surgepy
 #RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target install-resources-local 
 
-COPY example.py /home/renderman/example.py
+COPY example.py /home/surge/example.py
+
+USER root
+RUN apt-get update
+RUN apt-get install -y vim rsync
+
+USER surge
+COPY run.py /home/surge/run.py
+
+RUN cd ~/surge/ && ./build-linux.sh build --local --project=headless
+RUN mkdir -p /home/surge/.local/share/surge
+RUN cd ~/surge/ && ./build-linux.sh install --local --project=headless
+RUN mkdir -p ~/output
