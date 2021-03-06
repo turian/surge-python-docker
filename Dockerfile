@@ -19,6 +19,8 @@ RUN apt-get upgrade -y
 # Build tools
 RUN apt-get install -y git build-essential python3-pip
 RUN apt-get install -y build-essential libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
+RUN apt-get install -y vim rsync
+RUN apt-get install -y libsndfile-dev
 
 RUN apt-get remove cmake -y
 RUN apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget  libssl1.0-dev 
@@ -31,8 +33,7 @@ RUN apt-get install cmake -y
 #RUN apt-get install -y sudo less bc screen tmux unzip vim wget
 
 # Some of these packages are not totally necessary, but useful nonetheless
-#Remove scipy
-RUN pip3 install --upgrade tqdm ipython numpy scipy
+RUN pip3 install --upgrade tqdm ipython numpy soundfile
 
 # remove unused files
 RUN apt-get autoclean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
@@ -43,12 +44,12 @@ USER surge
 ENV HOME /home/surge
 
 # Clone surge from master, and build
-RUN cd ~ && git clone https://github.com/surge-synthesizer/surge.git
+#RUN cd ~ && git clone https://github.com/surge-synthesizer/surge.git
+RUN cd ~ && git clone --depth 1 --branch release/1.8.1 https://github.com/surge-synthesizer/surge.git
 RUN cd ~/surge/ && git submodule update --init --recursive
 RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DBUILD_SURGE_PYTHON_BINDINGS=TRUE -DCMAKE_BUILD_TYPE=Release
 
 RUN cd ~/surge/ && LD_LIBRARY_PATH="/usr/lib/python3.6/config-3.6m-x86_64-linux-gnu/:$LD_LIBRARY_PATH" /usr/bin/cmake --build buildpy --config Release --target surgepy
-#RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target install-resources-local 
 
 COPY example.py /home/surge/example.py
 
@@ -58,12 +59,3 @@ COPY run.py /home/surge/run.py
 RUN cd ~/surge/ && ./build-linux.sh build --local --project=headless
 RUN mkdir -p /home/surge/.local/share/surge
 RUN cd ~/surge/ && ./build-linux.sh install --local --project=headless
-#RUN mkdir -p ~/output
-RUN pip3 install --upgrade soundfile 
-
-USER root
-RUN apt-get update
-RUN apt-get install -y vim rsync
-RUN apt-get install -y libsndfile-dev
-
-USER surge
