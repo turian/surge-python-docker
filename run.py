@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Generate all patches with all notes in the MIDI range of a grand
+piano writing ogg files to output/
+"""
 
 import os
 import os.path

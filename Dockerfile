@@ -62,6 +62,7 @@ USER root
 RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
 # remove unused files
 RUN apt-get remove -y libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
+RUN apt-get remove -y git build-essential cmake
 RUN apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 
 USER surge
