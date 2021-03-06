@@ -31,6 +31,7 @@ RUN apt-get install cmake -y
 #RUN apt-get install -y sudo less bc screen tmux unzip vim wget
 
 # Some of these packages are not totally necessary, but useful nonetheless
+#Remove scipy
 RUN pip3 install --upgrade tqdm ipython numpy scipy
 
 # remove unused files
@@ -51,14 +52,18 @@ RUN cd ~/surge/ && LD_LIBRARY_PATH="/usr/lib/python3.6/config-3.6m-x86_64-linux-
 
 COPY example.py /home/surge/example.py
 
-USER root
-RUN apt-get update
-RUN apt-get install -y vim rsync
-
 USER surge
 COPY run.py /home/surge/run.py
 
 RUN cd ~/surge/ && ./build-linux.sh build --local --project=headless
 RUN mkdir -p /home/surge/.local/share/surge
 RUN cd ~/surge/ && ./build-linux.sh install --local --project=headless
-RUN mkdir -p ~/output
+#RUN mkdir -p ~/output
+RUN pip3 install --upgrade soundfile 
+
+USER root
+RUN apt-get update
+RUN apt-get install -y vim rsync
+RUN apt-get install -y libsndfile-dev
+
+USER surge

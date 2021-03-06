@@ -5,7 +5,7 @@ import os.path
 import glob
 import sys
 
-from scipy.io.wavfile import write
+import soundfile as sf
 
 sys.path.append("surge/buildpy")
 import surgepy
@@ -35,4 +35,5 @@ for n in chd:
     s.releaseNote( 0, n, 0 )
 s.processMultiBlock( buf, onesec )
 
-write("output/example.wav", s.getSampleRate(), buf)
+# WHY? float round
+sf.write('output/example.wav', buf.T, int(round(s.getSampleRate())))
