@@ -18,7 +18,7 @@ RUN apt-get upgrade -y
 
 # Build tools
 RUN apt-get install -y git build-essential python3-pip
-RUN apt-get install -y build-essential libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
+RUN apt-get install -y libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
 RUN apt-get install -y vim rsync
 RUN apt-get install -y libsndfile-dev
 
@@ -59,3 +59,8 @@ COPY run.py /home/surge/run.py
 RUN cd ~/surge/ && ./build-linux.sh build --local --project=headless
 RUN mkdir -p /home/surge/.local/share/surge
 RUN cd ~/surge/ && ./build-linux.sh install --local --project=headless
+
+USER root
+RUN apt-get remove -y libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
+
+USER surge
