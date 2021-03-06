@@ -13,7 +13,7 @@ import surgepy
 s = surgepy.createSurge( 44100 )
 
 patches = []
-for patchdir in glob.glob("surge/resources/data/patches_*"):
+for patchdir in glob.glob(".local/share/surge/patches_*"):
     for root, dirs, files in os.walk(patchdir, topdown=False):
         for f in files:
             if not f.endswith(".fxp"):

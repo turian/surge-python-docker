@@ -59,6 +59,7 @@ COPY run.py /home/surge/run.py
 RUN cd ~/surge/ && ./build-linux.sh build --local --project=headless
 RUN mkdir -p /home/surge/.local/share/surge
 RUN cd ~/surge/ && ./build-linux.sh install --local --project=headless
+RUN rm -Rf ~/surge/resources
 
 USER root
 RUN apt-get remove -y libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
