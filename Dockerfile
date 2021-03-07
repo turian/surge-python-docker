@@ -19,7 +19,7 @@ RUN apt-get upgrade -y
 # Build tools
 RUN apt-get install -y git build-essential python3-pip
 RUN apt-get install -y libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
-RUN apt-get install -y vim rsync
+RUN apt-get install -y vim rsync less bc
 RUN apt-get install -y libsndfile-dev vorbis-tools
 
 RUN apt-get remove cmake -y
@@ -29,9 +29,6 @@ RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' > /dev/
 RUN apt-get update
 RUN apt-get install cmake -y
 
-# Some command line utils you probably want
-#RUN apt-get install -y sudo less bc screen tmux unzip vim wget
-
 # Add non root user
 RUN useradd -ms /bin/bash surge && echo "surge:surge" | chpasswd && adduser surge sudo
 USER surge
@@ -40,8 +37,8 @@ ENV HOME /home/surge
 # Clone surge from master, and build
 #RUN cd ~ && git clone https://github.com/surge-synthesizer/surge.git
 #RUN cd ~ && git clone --depth 1 --branch release/1.8.1 https://github.com/surge-synthesizer/surge.git
-RUN cd ~ && wget https://github.com/surge-synthesizer/releases/releases/download/1.8.1/SurgeSrc_1.8.1.tgz && tar zxvf SurgeSrc_1.8.1.tgz && rm SurgeSrc_1.8.1.tgz
 #RUN cd ~/surge/ && git submodule update --init --recursive
+RUN cd ~ && wget https://github.com/surge-synthesizer/releases/releases/download/1.8.1/SurgeSrc_1.8.1.tgz && tar zxvf SurgeSrc_1.8.1.tgz && rm SurgeSrc_1.8.1.tgz
 RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DBUILD_SURGE_PYTHON_BINDINGS=TRUE -DCMAKE_BUILD_TYPE=Release
 
 RUN cd ~/surge/ && LD_LIBRARY_PATH="/usr/lib/python3.6/config-3.6m-x86_64-linux-gnu/:$LD_LIBRARY_PATH" /usr/bin/cmake --build buildpy --config Release --target surgepy
@@ -64,5 +61,7 @@ RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
 RUN apt-get remove -y libcairo-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev
 RUN apt-get remove -y git build-essential cmake gcc
 RUN apt-get autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+
+RUN chown -R surge:surge /home/surge/
 
 USER surge
