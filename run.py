@@ -62,7 +62,7 @@ def render(pnhv):
 
     for n in chd:
         s.releaseNote(0, n, 0)
-    s.processMultiBlock(buf, int(round((DURATION - NOTE_ON) * onesec)))
+    s.processMultiBlock(buf, int(round((DURATION - hold) * onesec)))
 
     # WHY? float round
     sf.write(slug, buf.T, int(round(s.getSampleRate())))
@@ -84,5 +84,5 @@ def generate_patch_note_hold_and_velocity():
         velocity = random.randint(1, MAX_VELOCITY)
         yield (patchidx, patchname, note, hold, velocity)
 
-p = multiprocessing.Pool(ncores)
+p = multiprocessing.Pool(ncores//2)
 r = list(tqdm(p.imap(render, generate_patch_note_hold_and_velocity()), total=MAX_PATCHES))
