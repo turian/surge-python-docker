@@ -42,6 +42,7 @@ for patchdir in sorted(glob.glob(".local/share/surge/patches_*")):
             if not f.endswith(".fxp"):
                 continue
             patches.append(os.path.join(root, f))
+patches = sorted(patches)
 
 def render(pnhv):
     patch, patchname, note, hold, velocity = pnhv
