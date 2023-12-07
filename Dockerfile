@@ -68,13 +68,21 @@ RUN apt-get install -y \
     libasound2-dev \
     libcurl4-openssl-dev \
     libwebkit2gtk-4.0-dev \
-    libgtk-3-dev
+    libgtk-3-dev \
+    libjack-jackd2-dev
 
 USER surge
 
 # Build Surge Synthesizer
-RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=TRUE -DCMAKE_BUILD_TYPE=Release
-RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surgepy
+#RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=TRUE -DCMAKE_BUILD_TYPE=Release
+#RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surgepy
+
+#RUN cd ~/surge/ && /usr/bin/cmake -Bbuild && /usr/bin/cmake --build build --config Release --target surge-staged-assets
+
+RUN cd ~/surge/ && /usr/bin/cmake -Bignore/bpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
+RUN cd ~/surge/ && /usr/bin/cmake --build ignore/bpy --target surgepy --config Release --target surge-staged-assets
+
+RUN cd ~/surge/ && /usr/bin/cmake --build ignore/bpy --config Release --target surge-staged-assets
 
 # Copy example files
 COPY example.py /home/surge/example.py
@@ -93,10 +101,10 @@ USER root
 RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
 
 # Clean up unnecessary packages and files
-RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev git build-essential cmake gcc && \
-    apt-get autoclean && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+#RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev git build-essential cmake gcc && \
+#    apt-get autoclean && \
+#    apt-get autoremove -y && \
+#    rm -rf /var/lib/apt/lists/*
 
 # Set ownership of home directory
 RUN chown -R surge:surge /home/surge/
