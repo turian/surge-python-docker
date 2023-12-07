@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Metadata
 LABEL maintainer="lastname@gmail.com"
 LABEL version="0.2"
-LABEL description="Surge synthesizer through Python, dockerized on Ubuntu 22.04 LTS for Apple Silicon"
+LABEL description="Surge synthesizer through Python, dockerized on Ubuntu 22.04 LTS"
 
 # Set working directory
 WORKDIR /root/
