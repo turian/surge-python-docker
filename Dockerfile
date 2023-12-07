@@ -73,16 +73,9 @@ RUN apt-get install -y \
 
 USER surge
 
-# Build Surge Synthesizer
-#RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=TRUE -DCMAKE_BUILD_TYPE=Release
-#RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surgepy
-
-#RUN cd ~/surge/ && /usr/bin/cmake -Bbuild && /usr/bin/cmake --build build --config Release --target surge-staged-assets
-
-RUN cd ~/surge/ && /usr/bin/cmake -Bignore/bpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
-RUN cd ~/surge/ && /usr/bin/cmake --build ignore/bpy --target surgepy --config Release --target surge-staged-assets
-
-RUN cd ~/surge/ && /usr/bin/cmake --build ignore/bpy --config Release --target surge-staged-assets
+RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
+RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
+RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets
 
 # Copy example files
 COPY example.py /home/surge/example.py
