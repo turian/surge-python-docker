@@ -75,7 +75,10 @@ USER surge
 
 RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
 RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
+RUN cd ~/surge/ && /usr/bin/cmake --install buildpy --config Release
 RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets
+RUN cd ~/surge/ && /usr/bin/cmake --install buildpy --config Release
+RUN rm -rf ~/surge/buildpy
 
 # Copy example files
 COPY example.py /home/surge/example.py
@@ -87,20 +90,18 @@ RUN echo "export PYTHONPATH=\"$PYTHONPATH:/home/surge/surge/buildpy/src/surge-py
 
 # /home/surge/surge/buildpy/src/surge-python/
 
-# Switch back to root user
-USER root
-
-# Install Python packages
-RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
-
 # Clean up unnecessary packages and files
 #RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev git build-essential cmake gcc && \
-#    apt-get autoclean && \
-#    apt-get autoremove -y && \
-#    rm -rf /var/lib/apt/lists/*
+RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev && \
+    apt-get autoclean && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set ownership of home directory
 RUN chown -R surge:surge /home/surge/
 
 # Switch back to surge user
 USER surge
+
+# Install Python packages
+RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
