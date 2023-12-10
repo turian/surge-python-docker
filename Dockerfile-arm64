@@ -58,7 +58,6 @@ ENV HOME /home/surge
 
 # Clone the specific tag of Surge Synthesizer
 RUN cd ~ && git clone --branch release_xt_1.2.3 --depth 1 https://github.com/surge-synthesizer/surge.git
-RUN cd ~/surge/ && git submodule update --init --recursive
 
 USER root
 
@@ -98,6 +97,8 @@ RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-c
     apt-get autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
+
+RUN rm -rf /home/surge/surge/.git
 
 # Set ownership of home directory
 RUN chown -R surge:surge /home/surge/
