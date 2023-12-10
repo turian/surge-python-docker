@@ -3,9 +3,9 @@
 Surge synthesizer through Python, dockerized.
 
 ```
-docker pull turian/surge-python
+docker pull turian/surge-python:latest-arm64
 # Or, build the docker yourself
-#docker build -t turian/surge-python .
+#docker build -t turian/surge-python:latest-arm64 -f Dockerfile-arm64 . --push
 docker run --rm --mount source=`pwd`/output,target=/home/surge/output,type=bind -it turian/surge-python bash
 ```
 
