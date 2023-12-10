@@ -73,11 +73,11 @@ RUN apt-get install -y \
 
 #USER surge
 
-RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
-RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
-RUN cd ~/surge/ && /usr/bin/cmake --install buildpy --config Release
-RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets
-RUN cd ~/surge/ && /usr/bin/cmake --install buildpy --config Release
+RUN cd ~surge/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
+RUN cd ~surge/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
+RUN cd ~surge/surge/ && /usr/bin/cmake --install buildpy --config Release
+RUN cd ~surge/surge/ && /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets
+RUN cd ~surge/surge/ && /usr/bin/cmake --install buildpy --config Release
 #RUN rm -rf ~/surge/buildpy
 
 # Copy example files
@@ -91,6 +91,16 @@ RUN echo "export PYTHONPATH=\"$PYTHONPATH:/home/surge/surge/buildpy/src/surge-py
 # /home/surge/surge/buildpy/src/surge-python/
 
 RUN apt install python3.11-venv -y
+
+# Install necessary packages, including sudo
+RUN apt-get update && \
+    apt-get install -y \
+    sudo
+
+# Give surge passwordless sudo privileges
+RUN echo 'surge ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/surge && \
+    chmod 0440 /etc/sudoers.d/surge
+
 
 # Clean up unnecessary packages and files
 #RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev git build-essential cmake gcc && \
