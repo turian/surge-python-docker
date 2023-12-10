@@ -9,6 +9,15 @@ docker pull turian/surge-python
 docker run --rm --mount source=`pwd`/output,target=/home/surge/output,type=bind -it turian/surge-python bash
 ```
 
+```
+docker buildx create --name mybuilder --use
+docker buildx inspect --bootstrap
+docker buildx ls
+
+
+docker buildx build --platform linux/arm64,linux/amd64 -t turian/surge-python:latest --push .
+```
+
 Within docker:
 ```
 # Check quickly that you have surgepy working
