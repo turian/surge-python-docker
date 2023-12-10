@@ -53,7 +53,7 @@ RUN useradd -ms /bin/bash surge && \
 # Clone and build Surge Synthesizer as user 'surge'
 USER surge
 RUN cd /home/surge && \
-    git clone --branch release_xt_1.2.3 --depth 1 https://github.com/surge-synthesizer/surge.git && \
+    git clone --branch release_xt_1.3.0 --depth 1 https://github.com/surge-synthesizer/surge.git && \
     cd surge && \
     git submodule update --init --recursive
 
