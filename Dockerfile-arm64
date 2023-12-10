@@ -124,4 +124,7 @@ ENV PATH="/home/surge/venv/bin:$PATH"
 RUN pip install --upgrade pip && \
     pip install tqdm ipython numpy soundfile python-slugify
 
+# Set the working directory to /home/surge
+WORKDIR /home/surge
+
 #RUN PYTHONPATH="$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python" /home/surge/example.py
