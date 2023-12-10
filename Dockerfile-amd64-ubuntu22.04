@@ -1,8 +1,8 @@
 # Base image and maintainer information
-FROM --platform=linux/amd64 ubuntu:23.10
+FROM --platform=linux/amd64 ubuntu:22.04
 LABEL maintainer="lastname@gmail.com" \
       version="0.2" \
-      description="Surge XT 1.3.0 synthesizer through Python, dockerized on Ubuntu 23.10 for AMD64"
+      description="Surge XT 1.30 synthesizer through Python, dockerized on Ubuntu 22.04 LTS for AMD64"
 
 # Set environment variables
 ENV LANG C.UTF-8
@@ -21,7 +21,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     apt-get upgrade -y && \
     apt-get install -y \
     # Development tools
-    git build-essential cmake \
+    git build-essential \
     # Python and utilities
     python3-pip python3.11-venv \
     # X11 and GUI libraries
@@ -39,10 +39,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     sudo
 
 # Install updated CMake from Kitware
-#RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg && \
-#    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null && \
-#    apt-get update && \
-#    apt-get install cmake -y
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg && \
+    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null && \
+    apt-get update && \
+    apt-get install cmake -y
 
 # Add non-root user 'surge' with passwordless sudo privileges
 RUN useradd -ms /bin/bash surge && \

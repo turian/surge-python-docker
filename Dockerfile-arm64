@@ -2,7 +2,7 @@
 FROM --platform=linux/arm64 ubuntu:23.10
 LABEL maintainer="lastname@gmail.com" \
       version="0.2" \
-      description="Surge synthesizer through Python, dockerized on Ubuntu 22.04 LTS"
+      description="Surge XT 1.3.0 synthesizer through Python, dockerized on Ubuntu 23.10 for ARM64"
 
 # Set environment variables
 ENV LANG C.UTF-8
