@@ -74,7 +74,11 @@ RUN cd /home/surge/surge && \
 
 # Build the surgepy target
 RUN cd /home/surge/surge && \
-    /usr/bin/cmake --build buildpy --target surgepy --config Release
+    /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
+
+# Install the buildpy configuration
+RUN cd /home/surge/surge && \
+    /usr/bin/cmake --install buildpy --config Release
 
 # Build the surge-staged-assets target
 RUN cd /home/surge/surge && \
