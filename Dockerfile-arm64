@@ -1,140 +1,82 @@
-
+# Base image and maintainer information
 FROM --platform=linux/arm64 ubuntu:23.04
+LABEL maintainer="lastname@gmail.com" \
+      version="0.2" \
+      description="Surge synthesizer through Python, dockerized on Ubuntu 22.04 LTS"
 
 # Set environment variables
 ENV LANG C.UTF-8
 ENV TZ=Etc/UTC
 ENV DEBIAN_FRONTEND=noninteractive
-
-# Metadata
-LABEL maintainer="lastname@gmail.com"
-LABEL version="0.2"
-LABEL description="Surge synthesizer through Python, dockerized on Ubuntu 22.04 LTS"
+ENV HOME=/home/surge
+ENV PATH="/home/surge/venv/bin:$PATH"
 
 # Set working directory
 WORKDIR /root/
 
-# Set timezone
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-# Update and upgrade Ubuntu packages
-RUN apt-get update && \
+# Set timezone and update system packages
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
-    git \
-    build-essential \
-    python3-pip \
-    libcairo2-dev \
-    libxkbcommon-x11-0 \
-    libxkbcommon-dev \
-    libxcb-cursor-dev \
-    libxcb-keysyms1-dev \
-    libxcb-util-dev \
-    vim \
-    rsync \
-    less \
-    bc \
-    libsndfile-dev \
-    vorbis-tools \
-    apt-transport-https \
-    ca-certificates \
-    gnupg \
-    software-properties-common \
-    wget \
-    libssl-dev
+      git build-essential python3-pip python3.11-venv \
+      libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev \
+      libxcb-keysyms1-dev libxcb-util-dev vim rsync less bc libsndfile-dev \
+      vorbis-tools apt-transport-https ca-certificates gnupg software-properties-common \
+      wget libssl-dev sudo cmake
 
 # Install updated CMake from Kitware
-RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg && \
-    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null && \
-    apt-get update && \
-    apt-get install cmake -y
+#RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg && \
+#    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null && \
+#    apt-get update && \
+#    apt-get install cmake -y
 
-# Add non-root user
-RUN useradd -ms /bin/bash surge && echo "surge:surge" | chpasswd && adduser surge sudo
-
-# Switch to non-root user
-USER surge
-ENV HOME /home/surge
-
-# Clone the specific tag of Surge Synthesizer
-RUN cd ~ && git clone --branch release_xt_1.2.3 --depth 1 https://github.com/surge-synthesizer/surge.git
-RUN cd ~/surge/ && git submodule update --init --recursive && rm -rf /home/surge/surge/.git
-
-USER root
-
-# Install necessary dependencies for Surge synthesizer
-RUN apt-get install -y \
-    libxrandr-dev \
-    libasound2-dev \
-    libcurl4-openssl-dev \
-    libwebkit2gtk-4.0-dev \
-    libgtk-3-dev \
-    libjack-jackd2-dev
-
-#USER surge
-
-RUN cd ~surge/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
-RUN cd ~surge/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
-RUN cd ~surge/surge/ && /usr/bin/cmake --install buildpy --config Release
-RUN cd ~surge/surge/ && /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets
-RUN cd ~surge/surge/ && /usr/bin/cmake --install buildpy --config Release
-#RUN rm -rf ~/surge/buildpy
-
-# Copy example files
-COPY example.py /home/surge/example.py
-COPY run.py /home/surge/run.py
-
-# Install Surge locally and set PYTHONPATH
-RUN mkdir -p /home/surge/.local/share/surge
-RUN echo "export PYTHONPATH=\"$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python\"" >> /home/surge/.bashrc
-
-# /home/surge/surge/buildpy/src/surge-python/
-
-RUN apt install python3.11-venv -y
-
-# Install necessary packages, including sudo
-RUN apt-get update && \
-    apt-get install -y \
-    sudo
-
-# Give surge passwordless sudo privileges
-RUN echo 'surge ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/surge && \
+# Add non-root user 'surge' with passwordless sudo privileges
+RUN useradd -ms /bin/bash surge && \
+    echo "surge:surge" | chpasswd && \
+    echo 'surge ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/surge && \
     chmod 0440 /etc/sudoers.d/surge
 
+# Clone and build Surge Synthesizer as user 'surge'
+USER surge
+RUN cd /home/surge && \
+    git clone --branch release_xt_1.2.3 --depth 1 https://github.com/surge-synthesizer/surge.git && \
+    cd surge && \
+    git submodule update --init --recursive && \
+    rm -rf .git
+
+USER root
+RUN cd /home/surge/surge && \
+    /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release && \
+    /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets && \
+    /usr/bin/cmake --install buildpy --config Release && \
+    /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets && \
+    /usr/bin/cmake --install buildpy --config Release
+#    rm -rf /home/surge/surge/buildpy
+
+USER surge
+
+# Create and activate a virtual environment for Python
+RUN python3 -m venv /home/surge/venv && \
+    echo "source /home/surge/venv/bin/activate" >> /home/surge/.bashrc && \
+    pip install --upgrade pip && \
+    pip install tqdm ipython numpy soundfile python-slugify
+
+# Copy example files
+COPY example.py run.py /home/surge/
+
+# Set ownership of home directory
+USER root
+RUN chown -R surge:surge /home/surge/
+USER surge
 
 # Clean up unnecessary packages and files
-#RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev git build-essential cmake gcc && \
+USER root
 RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev && \
     apt-get autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-# Set ownership of home directory
-RUN chown -R surge:surge /home/surge/
-
-# Switch back to surge user
-USER surge
-
-# Install Python packages
-#RUN pip3 install --user surge --upgrade tqdm ipython numpy soundfile python-slugify
-#RUN PYTHONPATH="$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python" /home/surge/example.py
-
-USER surge
-
-# Create a virtual environment for the 'surge' user
-RUN python3 -m venv /home/surge/venv
-
-# Activate the virtual environment automatically upon login
-RUN echo "source /home/surge/venv/bin/activate" >> /home/surge/.bashrc
-
-# Set the environment PATH to ensure commands use the virtual environment first
-ENV PATH="/home/surge/venv/bin:$PATH"
-
-# Install Python packages inside the virtual environment
-RUN pip install --upgrade pip && \
-    pip install tqdm ipython numpy soundfile python-slugify
-
 # Set the working directory to /home/surge
 WORKDIR /home/surge
-
-#RUN PYTHONPATH="$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python" /home/surge/example.py
