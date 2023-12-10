@@ -71,14 +71,14 @@ RUN apt-get install -y \
     libgtk-3-dev \
     libjack-jackd2-dev
 
-USER surge
+#USER surge
 
 RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
 RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
 RUN cd ~/surge/ && /usr/bin/cmake --install buildpy --config Release
 RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets
 RUN cd ~/surge/ && /usr/bin/cmake --install buildpy --config Release
-RUN rm -rf ~/surge/buildpy
+#RUN rm -rf ~/surge/buildpy
 
 # Copy example files
 COPY example.py /home/surge/example.py
@@ -105,3 +105,4 @@ USER surge
 
 # Install Python packages
 RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
+RUN PYTHONPATH="$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python" /home/surge/example.py
