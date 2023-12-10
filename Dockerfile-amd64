@@ -1,4 +1,3 @@
-
 FROM --platform=linux/amd64 ubuntu:23.04
 
 # Set environment variables
@@ -80,8 +79,6 @@ RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surg
 RUN cd ~/surge/ && /usr/bin/cmake --install buildpy --config Release
 #RUN rm -rf ~/surge/buildpy
 
-
-
 # Copy example files
 COPY example.py /home/surge/example.py
 COPY run.py /home/surge/run.py
@@ -106,5 +103,22 @@ RUN chown -R surge:surge /home/surge/
 USER surge
 
 # Install Python packages
-RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
-RUN PYTHONPATH="$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python" /home/surge/example.py
+#RUN pip3 install --user surge --upgrade tqdm ipython numpy soundfile python-slugify
+#RUN PYTHONPATH="$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python" /home/surge/example.py
+
+USER surge
+
+# Create a virtual environment for the 'surge' user
+RUN python3 -m venv /home/surge/venv
+
+# Activate the virtual environment automatically upon login
+RUN echo "source /home/surge/venv/bin/activate" >> /home/surge/.bashrc
+
+# Set the environment PATH to ensure commands use the virtual environment first
+ENV PATH="/home/surge/venv/bin:$PATH"
+
+# Install Python packages inside the virtual environment
+RUN pip install --upgrade pip && \
+    pip install tqdm ipython numpy soundfile python-slugify
+
+#RUN PYTHONPATH="$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python" /home/surge/example.py
