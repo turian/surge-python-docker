@@ -23,7 +23,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     # Development tools
     git build-essential \
     # Python and utilities
-    python3-pip python3.11-venv \
+    python3-pip python3.10-venv \
     # X11 and GUI libraries
     libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev \
     libxcb-keysyms1-dev libxcb-util-dev libxrandr-dev libgtk-3-dev \
