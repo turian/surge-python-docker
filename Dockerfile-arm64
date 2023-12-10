@@ -20,11 +20,23 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
-      git build-essential python3-pip python3.11-venv \
-      libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev \
-      libxcb-keysyms1-dev libxcb-util-dev vim rsync less bc libsndfile-dev \
-      vorbis-tools apt-transport-https ca-certificates gnupg software-properties-common \
-      wget libssl-dev sudo cmake
+    # Development tools
+    git build-essential cmake \
+    # Python and utilities
+    python3-pip python3.11-venv \
+    # X11 and GUI libraries
+    libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev \
+    libxcb-keysyms1-dev libxcb-util-dev libxrandr-dev libgtk-3-dev \
+    # Audio libraries
+    libsndfile-dev libasound2-dev libjack-jackd2-dev \
+    # Networking and protocol libraries
+    libcurl4-openssl-dev libwebkit2gtk-4.0-dev \
+    # Essential utilities
+    vim rsync less bc wget \
+    # Security and certificates
+    apt-transport-https ca-certificates gnupg libssl-dev \
+    # User management
+    sudo
 
 # Install updated CMake from Kitware
 #RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg && \
