@@ -1,5 +1,5 @@
 
-FROM --platform=linux/arm64 ubuntu:22.04
+FROM --platform=linux/arm64 ubuntu:23.04
 
 # Set environment variables
 ENV LANG C.UTF-8
