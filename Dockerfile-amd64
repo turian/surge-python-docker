@@ -55,8 +55,8 @@ USER surge
 RUN cd /home/surge && \
     git clone --branch release_xt_1.2.3 --depth 1 https://github.com/surge-synthesizer/surge.git && \
     cd surge && \
-    git submodule update --init --recursive && \
-    rm -rf .git
+    git submodule update --init --recursive
+
 
 USER root
 RUN cd /home/surge/surge && \
@@ -64,7 +64,8 @@ RUN cd /home/surge/surge && \
     /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets && \
     /usr/bin/cmake --install buildpy --config Release && \
     /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets && \
-    /usr/bin/cmake --install buildpy --config Release
+    /usr/bin/cmake --install buildpy --config Release && \
+    rm -rf .git
 #    rm -rf /home/surge/surge/buildpy
 
 USER surge
