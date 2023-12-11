@@ -27,11 +27,13 @@ NOTE_RANGE = [21, 108]
 DURATION = 4
 MAX_VELOCITY = 127
 
+
 def pick_note_on_duration(lower=0.01, upper=DURATION):
-    y = (upper - lower + 1.) ** random.random() + lower - 1
+    y = (upper - lower + 1.0) ** random.random() + lower - 1
     assert y >= lower
     assert y <= upper
     return y
+
 
 s = surgepy.createSurge(SR)
 
@@ -44,11 +46,18 @@ for patchdir in sorted(glob.glob(".local/share/surge/patches_*")):
             patches.append(os.path.join(root, f))
 patches = sorted(patches)
 
+
 def render(pnhv):
     patch, patchname, note, hold, velocity = pnhv
 
     slug = patchname.replace(".local/share/", "").replace(".fxp", "")
-    slug = "output/%06d-%s-note=%d-velocity=%d-hold=%f.wav" % (patch, slugify(slug, lowercase=False), note, velocity, hold)
+    slug = "output/%06d-%s-note=%d-velocity=%d-hold=%f.wav" % (
+        patch,
+        slugify(slug, lowercase=False),
+        note,
+        velocity,
+        hold,
+    )
     if os.path.exists(slug.replace(".wav", ".ogg")):
         return
     s.loadPatch(patchname)
@@ -76,6 +85,7 @@ ncores = multiprocessing.cpu_count()
 print(f"{ncores} cores")
 print(f"{len(patches)} patches")
 
+
 def generate_patch_note_hold_and_velocity():
     for i in range(MAX_PATCHES):
         patchidx = random.randint(0, npatches - 1)
@@ -85,5 +95,8 @@ def generate_patch_note_hold_and_velocity():
         velocity = random.randint(1, MAX_VELOCITY)
         yield (patchidx, patchname, note, hold, velocity)
 
-p = multiprocessing.Pool(ncores//2)
-r = list(tqdm(p.imap(render, generate_patch_note_hold_and_velocity()), total=MAX_PATCHES))
+
+p = multiprocessing.Pool(ncores // 2)
+r = list(
+    tqdm(p.imap(render, generate_patch_note_hold_and_velocity()), total=MAX_PATCHES)
+)

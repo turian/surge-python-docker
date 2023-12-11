@@ -7,8 +7,8 @@ settings, writing a 32-bit WAV file to the specified output.
 import argparse
 import os
 import sys
-import numpy as np
 
+import numpy as np
 import soundfile as sf
 import surgepy
 

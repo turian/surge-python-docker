@@ -2,6 +2,7 @@
 
 import glob
 import os
+import os.path
 import random
 from pathlib import Path
 
@@ -23,11 +24,14 @@ for fxp_path in glob.glob("/usr/local/share/surge-xt/**/*fxp", recursive=True):
 
     paths.append((fxp_path, wavfilename))
 
+    if not os.path.exists(wavfilename):
+        os.mkdir(wavfilename)
+
 paths_and_i = []
 for i in range(30):
     istr = f"{i:03d}"
     for fxp_path, wavfilename in paths:
-        new_wavfilename = f"{wavfilename}_{istr}.wav"
+        new_wavfilename = f"{wavfilename}/{wavfilename}_{istr}.wav"
         paths_and_i.append((fxp_path, new_wavfilename, istr))
 
 random.shuffle(paths_and_i)
