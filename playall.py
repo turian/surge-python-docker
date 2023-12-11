@@ -8,7 +8,10 @@ import random
 from pathlib import Path
 
 import tqdm
+from parallelbar import progress_imap
 from slugify import slugify
+
+TIMEOUT = 10
 
 
 def create_wav_filename(fxppath):
@@ -50,7 +53,7 @@ for fxp_path in glob.glob("/usr/local/share/surge-xt/**/*fxp", recursive=True):
         os.mkdir(wavfilename)
 
 paths.sort(key=lambda x: hashlib.sha1(str(x[0]).encode("utf-8")).hexdigest())
-paths = paths[:50]
+paths = paths[:1000]
 
 paths_and_i = []
 for i in range(30):
@@ -61,9 +64,14 @@ for i in range(30):
         new_wavfilename = f"{wavfilename}/{wavfilename}_{istr}.wav"
         paths_and_i.append((fxp_path, new_wavfilename, istr))
 
-random.shuffle(paths_and_i)
-for fxp_path, wavfilename, istr in tqdm.tqdm(paths_and_i):
+
+def process_paths(paths):
+    fxp_path, wavfilename, _ = paths
     oggfilename = wavfilename.replace(".wav", ".ogg")
     if not Path(oggfilename).exists():
         cmd = f"../playnote.py --fxppreset '{fxp_path}' -o '{wavfilename}' ; oggenc -Q '{wavfilename}' ; rm '{wavfilename}'"
         os.system(cmd)
+
+
+random.shuffle(paths_and_i)
+progress_imap(process_paths, paths_and_i, process_timeout=TIMEOUT, n_cpu=4)
