@@ -68,28 +68,13 @@ USER root
 #    rm -rf .git
 ##    rm -rf /home/surge/surge/buildpy
 
-# Configure the build with CMake
 RUN cd /home/surge/surge && \
-    /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
-
-# Build the surgepy target
-RUN cd /home/surge/surge && \
-    /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
-
-# Install the buildpy configuration
-RUN cd /home/surge/surge && \
-    /usr/bin/cmake --install buildpy --config Release
-
-# Build the surge-staged-assets target
-RUN cd /home/surge/surge && \
-    /usr/bin/cmake --build buildpy --target surge-staged-assets --config Release
-
-# Install the buildpy configuration
-RUN cd /home/surge/surge && \
-    /usr/bin/cmake --install buildpy --config Release
-
-# Clean up the .git directory
-RUN rm -rf /home/surge/surge/.git
+    /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release && \
+    /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets && \
+    /usr/bin/cmake --install buildpy --config Release && \
+    /usr/bin/cmake --build buildpy --target surge-staged-assets --config Release && \
+    /usr/bin/cmake --install buildpy --config Release && \
+    rm -rf /home/surge/surge/.git
 
 USER surge
 

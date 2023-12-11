@@ -18,6 +18,12 @@ docker buildx ls
 docker buildx build --platform linux/arm64,linux/amd64 -t turian/surge-python:latest --push .
 ```
 
+
+```
+docker build -t turian/surge-python:ubuntu2204-arm64 -f Dockerfile-arm64-ubuntu22.04 . --push
+docker build -t turian/surge-python:latest-arm64 -f Dockerfile-arm64 . --push
+```
+
 Within docker:
 ```
 # Check quickly that you have surgepy working
