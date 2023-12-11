@@ -38,5 +38,5 @@ random.shuffle(paths_and_i)
 for fxp_path, wavfilename, istr in tqdm.tqdm(paths_and_i):
     oggfilename = wavfilename.replace(".wav", ".ogg")
     if not Path(oggfilename).exists():
-        cmd = f"../playnote.py --fxppreset '{fxp_path}' -o '{wavfilename}' ; oggenc '{wavfilename}' ; rm '{wavfilename}'"
+        cmd = f"../playnote.py --fxppreset '{fxp_path}' -o '{wavfilename}' ; oggenc -Q '{wavfilename}' ; rm '{wavfilename}'"
         os.system(cmd)

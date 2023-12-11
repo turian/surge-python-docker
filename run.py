@@ -4,18 +4,17 @@ Generate all patches with all notes in the MIDI range of a grand
 piano writing ogg files to output/
 """
 
+import glob
+import multiprocessing
 import os
 import os.path
-import glob
+import random
 import sys
 
 import soundfile as sf
+import surgepy
 from slugify import slugify
 from tqdm.auto import tqdm
-import multiprocessing
-
-import surgepy
-import random
 
 random.seed(0)
 
