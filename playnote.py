@@ -7,6 +7,7 @@ settings, writing a 32-bit WAV file to the specified output.
 import argparse
 import os
 import sys
+import numpy as np
 
 import soundfile as sf
 import surgepy
@@ -32,6 +33,10 @@ def play_and_record(fxppreset, note, duration, hold, velocity, output, sr):
     s.releaseNote(0, note, 0)
     s.processMultiBlock(buf, hold_blocks)
 
+    max_abs_value = np.max(np.abs(buf))
+    if max_abs_value > 1.0:
+        buf /= max_abs_value
+        max_abs_value = np.max(np.abs(buf))
     sf.write(output, buf.T, sr, subtype="FLOAT")  # Save as 32-bit float
 
     # Output diagnostics to stderr
@@ -39,7 +44,6 @@ def play_and_record(fxppreset, note, duration, hold, velocity, output, sr):
     sys.stderr.write(
         f"Total blocks: {total_blocks}, Hold blocks: {hold_blocks}, Release blocks: {release_blocks}\n"
     )
-    max_abs_value = np.max(np.abs(buf))
     sys.stderr.write(f"Max absolute buffer value: {max_abs_value}\n")
 
 
