@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Generate a single patch with specified note in the MIDI range and settings,
-writing a 32-bit WAV file to the specified output.
+Play a Surge vstpreset with specified note in the MIDI range and
+settings, writing a 32-bit WAV file to the specified output.
 """
 
 import argparse
@@ -12,8 +12,12 @@ import soundfile as sf
 import surgepy
 
 
-def play_and_record(patchname, note, duration, hold, velocity, output, sr):
+def play_and_record(fxppreset, note, duration, hold, velocity, output, sr):
     s = surgepy.createSurge(sr)
+
+    # Load the specified FXP preset file
+    if not s.loadPatch(fxppreset):
+        raise ValueError("Failed to load the preset file: " + fxppreset)
 
     blocks_per_second = sr / s.getBlockSize()
     total_blocks = int(round(duration * blocks_per_second + 0.5))
@@ -87,13 +91,8 @@ def main():
 
     args = parser.parse_args()
 
-    if not os.path.exists(args.fxppreset) or not args.fxppreset.endswith(".fxp"):
-        raise ValueError(
-            "Invalid FXPPreset file. Make sure it exists and has a .fxp extension."
-        )
-
-    if args.hold_duration < 0 or args.hold_duration > args.duration:
-        raise ValueError("Hold duration must be >= 0 and <= duration.")
+    if not os.path.exists(args.fxppreset):
+        raise ValueError("FXP preset file does not exist: " + args.fxppreset)
 
     play_and_record(
         args.fxppreset,
