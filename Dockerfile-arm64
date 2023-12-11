@@ -28,7 +28,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev \
     libxcb-keysyms1-dev libxcb-util-dev libxrandr-dev libgtk-3-dev \
     # Audio libraries
-    libsndfile-dev libasound2-dev libjack-jackd2-dev \
+    libsndfile-dev libasound2-dev libjack-jackd2-dev vorbis-tools \
     # Networking and protocol libraries
     libcurl4-openssl-dev libwebkit2gtk-4.0-dev \
     # Essential utilities
@@ -90,7 +90,7 @@ RUN python3 -m venv /home/surge/venv && \
     pip install tqdm ipython numpy soundfile python-slugify
 
 # Copy example files
-COPY example.py run.py /home/surge/
+COPY example.py run.py playnote.py playall.py /home/surge/
 
 # Set ownership of home directory
 USER root
@@ -103,6 +103,8 @@ RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-c
     apt-get autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
+
+USER surge
 
 # Set the working directory to /home/surge
 WORKDIR /home/surge

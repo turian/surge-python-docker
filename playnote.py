@@ -39,7 +39,8 @@ def play_and_record(fxppreset, note, duration, hold, velocity, output, sr):
     sys.stderr.write(
         f"Total blocks: {total_blocks}, Hold blocks: {hold_blocks}, Release blocks: {release_blocks}\n"
     )
-    sys.stderr.write(f"Max absolute buffer value: {max(abs(buf))}\n")
+    max_abs_value = np.max(np.abs(buf))
+    sys.stderr.write(f"Max absolute buffer value: {max_abs_value}\n")
 
 
 def main():
