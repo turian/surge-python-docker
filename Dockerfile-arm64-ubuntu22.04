@@ -85,7 +85,7 @@ RUN python3 -m venv /home/surge/venv && \
     pip install tqdm ipython numpy soundfile python-slugify
 
 # Copy example files
-COPY example.py run.py /home/surge/
+COPY example.py run.py playnote.py /home/surge/
 
 # Set ownership of home directory
 USER root
