@@ -87,7 +87,7 @@ USER surge
 RUN python3 -m venv /home/surge/venv && \
     echo "source /home/surge/venv/bin/activate" >> /home/surge/.bashrc && \
     pip install --upgrade pip && \
-    pip install tqdm ipython numpy soundfile python-slugify
+    pip install tqdm ipython numpy soundfile python-slugify parallelbar
 
 # Copy example files
 COPY example.py run.py playnote.py playall.py /home/surge/
