@@ -84,6 +84,10 @@ RUN python3 -m venv /home/surge/venv && \
     pip install --upgrade pip && \
     pip install tqdm ipython numpy soundfile python-slugify parallelbar
 
+# Note that this and the virtual environment are only used in interactive shells,
+# not in non-interactive commands.
+RUN echo 'export PYTHONPATH="/home/surge/surge/buildpy/src/surge-python/:$PYTHONPATH"' >> /home/surge/.bashrc
+
 # Copy example files
 COPY example.py run.py playnote.py playall.py /home/surge/
 
@@ -103,3 +107,10 @@ USER surge
 
 # Set the working directory to /home/surge
 WORKDIR /home/surge
+
+# Copy the startup script
+COPY startup.sh /home/surge/
+RUN chmod +x /home/surge/startup.sh
+
+# Use the startup script as the entry point
+ENTRYPOINT ["/home/surge/startup.sh"]
