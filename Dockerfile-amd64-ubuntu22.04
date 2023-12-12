@@ -68,21 +68,14 @@ RUN cd /home/surge/surge && \
     rm -rf .git
 #    rm -rf /home/surge/surge/buildpy
 
-# Set ownership of home directory
-USER root
-RUN chown -R surge:surge /home/surge/
-
 # Clean up unnecessary packages and files
+USER root
 RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev && \
     apt-get autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
 USER surge
-
-# Set the working directory to /home/surge
-WORKDIR /home/surge
-
 # Create and activate a virtual environment for Python
 RUN python3 -m venv /home/surge/venv && \
     echo "source /home/surge/venv/bin/activate" >> /home/surge/.bashrc && \
@@ -98,7 +91,16 @@ COPY example.py run.py playnote.py playall.py /home/surge/
 
 # Copy the startup script
 COPY startup.sh /home/surge/
+
+# Set ownership of home directory
+USER root
+RUN chown -R surge:surge /home/surge/
 RUN chmod +x /home/surge/startup.sh
+
+USER surge
+
+# Set the working directory to /home/surge
+WORKDIR /home/surge
 
 # Use the startup script as the entry point
 ENTRYPOINT ["/home/surge/startup.sh"]
