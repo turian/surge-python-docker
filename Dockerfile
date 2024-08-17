@@ -41,7 +41,8 @@ RUN apt-get update && \
     gnupg \
     software-properties-common \
     wget \
-    libssl-dev
+    libssl-dev \
+    sudo
 
 # Install updated CMake from Kitware
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg && \
@@ -51,6 +52,7 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
 
 # Add non-root user
 RUN useradd -ms /bin/bash surge && echo "surge:surge" | chpasswd && adduser surge sudo
+RUN echo 'surge ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Switch to non-root user
 USER surge
@@ -100,16 +102,11 @@ USER root
 # Set ownership of home directory
 RUN chown -R surge:surge /home/surge/
 
-RUN apt-get install -y sudo
-RUN echo 'surge ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 #RUN apt-get install -y pipx
-RUN apt-get install -y python3-pip
 
 # Switch back to surge user
 USER surge
 
 #RUN python3 -m pipx ensurepath
-RUN cd ~ && pip3 install --upgrade tqdm ipython numpy soundfile python-slugify --break-system-packages
-
 ## Install Python packages
-#RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
+RUN cd ~ && pip3 install --upgrade tqdm ipython numpy soundfile python-slugify --break-system-packages
