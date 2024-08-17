@@ -57,7 +57,7 @@ USER surge
 ENV HOME /home/surge
 
 # Clone the specific tag of Surge Synthesizer
-RUN cd ~ && git clone --branch release_xt_1.2.3 --depth 1 https://github.com/surge-synthesizer/surge.git
+RUN cd ~ && git clone --branch release_xt_1.3.4 --depth 1 https://github.com/surge-synthesizer/surge.git
 RUN cd ~/surge/ && git submodule update --init --recursive
 
 USER root
