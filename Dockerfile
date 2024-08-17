@@ -1,5 +1,5 @@
-# Use Ubuntu 22.04 LTS base image
-FROM ubuntu:22.04
+# Use Ubuntu 24.04 base image
+FROM ubuntu:24.04
 
 # Set environment variables
 ENV LANG C.UTF-8
@@ -8,8 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Metadata
 LABEL maintainer="lastname@gmail.com"
-LABEL version="0.2"
-LABEL description="Surge synthesizer through Python, dockerized on Ubuntu 22.04 LTS"
+LABEL version="0.3"
+LABEL description="Surge synthesizer through Python, dockerized on Ubuntu 24.04"
 
 # Set working directory
 WORKDIR /root/
@@ -45,7 +45,7 @@ RUN apt-get update && \
 
 # Install updated CMake from Kitware
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg && \
-    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ jammy main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null && \
+    echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ noble main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null && \
     apt-get update && \
     apt-get install cmake -y
 
@@ -67,11 +67,12 @@ RUN apt-get install -y \
     libxrandr-dev \
     libasound2-dev \
     libcurl4-openssl-dev \
-    libwebkit2gtk-4.0-dev \
+    libwebkit2gtk-4.1-dev \
     libgtk-3-dev \
     libjack-jackd2-dev
 
-USER surge
+# Surge want webkit2git-4.0 but that version would be a backport for Noble
+#RUN apt-get install -y libwebkit2gtk-4.1-dev
 
 RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -DCMAKE_BUILD_TYPE=Release
 RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
@@ -90,9 +91,6 @@ RUN echo "export PYTHONPATH=\"$PYTHONPATH:/home/surge/surge/buildpy/src/surge-py
 # Switch back to root user
 USER root
 
-# Install Python packages
-RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
-
 # Clean up unnecessary packages and files
 #RUN apt-get remove -y libcairo2-dev libxkbcommon-x11-0 libxkbcommon-dev libxcb-cursor-dev libxcb-keysyms1-dev libxcb-util-dev git build-essential cmake gcc && \
 #    apt-get autoclean && \
@@ -102,5 +100,16 @@ RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
 # Set ownership of home directory
 RUN chown -R surge:surge /home/surge/
 
+RUN apt-get install -y sudo
+RUN echo 'surge ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+#RUN apt-get install -y pipx
+RUN apt-get install -y python3-pip
+
 # Switch back to surge user
 USER surge
+
+#RUN python3 -m pipx ensurepath
+RUN cd ~ && pip3 install --upgrade tqdm ipython numpy soundfile python-slugify --break-system-packages
+
+## Install Python packages
+#RUN pip3 install --upgrade tqdm ipython numpy soundfile python-slugify
