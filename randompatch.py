@@ -1,3 +1,4 @@
+import glob
 import os
 import random
 
@@ -14,6 +15,12 @@ MAX_VELOCITY = 127
 note = 64
 velocity = 100
 hold = 1.5
+
+
+# Directory containing wavetables
+FACTORY_WAVETABLES = glob.glob(
+    "/home/surge/surge/resources/data/wavetables*/**/*.wav", recursive=True
+)
 
 
 # Function to randomize a parameter's value within its range
@@ -56,10 +63,10 @@ for osc_id in range(num_oscillators_to_use):
     for param_name, param in osc_params.items():
         if isinstance(param, surgepy.SurgeNamedParamId):
             if "wavetable" in param_name.lower():
-                # Get the range of available wavetables
-                wavetable_max = int(synth.getParamMax(param))
-                wavetable_index = random.randint(0, wavetable_max)
-                synth.setParamVal(param, wavetable_index)
+                # Select and load a random wavetable if available
+                wavetable_path = random.choice(FACTORY_WAVETABLES)
+                if wavetable_path:
+                    synth.loadWavetable(0, osc_id, wavetable_path)
             else:
                 random_value = randomize_param(synth, param)
                 synth.setParamVal(param, random_value)
@@ -104,7 +111,7 @@ for n in chd:
     synth.releaseNote(0, n, 0)
 synth.processMultiBlock(buf, int(round((DURATION - hold) * onesec)))
 
-slug = "output.wav"
+slug = "output/random.wav"
 # WHY? float round
 sf.write(slug, buf.T, int(round(synth.getSampleRate())))
 # osynth.system(f"oggenc --quality 10 {slug}")

@@ -81,11 +81,6 @@ RUN cd ~/surge/ && /usr/bin/cmake -Bbuildpy -DSURGE_BUILD_PYTHON_BINDINGS=True -
 RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --target surgepy --config Release --target surge-staged-assets
 RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surge-staged-assets
 
-# Copy example files
-COPY example.py /home/surge/example.py
-COPY run.py /home/surge/run.py
-COPY randompatch.py /home/surge/randompatch.py
-
 # Install Surge locally and set PYTHONPATH
 RUN mkdir -p /home/surge/.local/share/surge
 RUN echo "export PYTHONPATH=\"$PYTHONPATH:/home/surge/surge/buildpy/src/surge-python\"" >> /home/surge/.bashrc
@@ -112,3 +107,8 @@ USER surge
 #RUN python3 -m pipx ensurepath
 ## Install Python packages
 RUN cd ~ && pip3 install --upgrade tqdm ipython numpy soundfile python-slugify --break-system-packages
+
+# Copy example files
+COPY example.py /home/surge/example.py
+COPY run.py /home/surge/run.py
+COPY randompatch.py /home/surge/randompatch.py
