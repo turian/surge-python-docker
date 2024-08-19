@@ -27,7 +27,17 @@ FACTORY_WAVETABLES = glob.glob(
 def randomize_param(synth, param):
     param_min = synth.getParamMin(param)
     param_max = synth.getParamMax(param)
-    random_value = random.uniform(param_min, param_max)
+    param_type = synth.getParamValType(param)
+
+    if param_type == "int":
+        random_value = random.randint(int(param_min), int(param_max))
+    elif param_type == "float":
+        random_value = random.uniform(param_min, param_max)
+    elif param_type == "bool":
+        random_value = random.choice([True, False])
+    else:
+        raise ValueError(f"Unsupported parameter type: {param_type}")
+
     return random_value
 
 
