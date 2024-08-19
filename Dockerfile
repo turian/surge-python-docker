@@ -112,3 +112,4 @@ RUN cd ~ && pip3 install --upgrade tqdm ipython numpy soundfile python-slugify -
 COPY example.py /home/surge/example.py
 COPY run.py /home/surge/run.py
 COPY randompatch.py /home/surge/randompatch.py
+COPY gathermetadata.py /home/surge/gathermetadata.py
