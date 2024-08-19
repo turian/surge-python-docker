@@ -2,7 +2,7 @@
 FROM ubuntu:24.04
 
 # Set environment variables
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 ENV TZ=Etc/UTC
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -56,7 +56,7 @@ RUN echo 'surge ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Switch to non-root user
 USER surge
-ENV HOME /home/surge
+ENV HOME=/home/surge
 
 # Clone the specific tag of Surge Synthesizer
 RUN cd ~ && git clone --branch release_xt_1.3.4 --depth 1 https://github.com/surge-synthesizer/surge.git
@@ -83,6 +83,7 @@ RUN cd ~/surge/ && /usr/bin/cmake --build buildpy --config Release --target surg
 # Copy example files
 COPY example.py /home/surge/example.py
 COPY run.py /home/surge/run.py
+COPY randompatch.py /home/surge/randompatch.py
 
 # Install Surge locally and set PYTHONPATH
 RUN mkdir -p /home/surge/.local/share/surge
