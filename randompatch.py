@@ -1,6 +1,19 @@
+import os
 import random
 
+import soundfile as sf
 import surgepy
+
+SR = 44100
+# Grand piano
+NOTE_RANGE = [21, 108]
+
+DURATION = 4
+MAX_VELOCITY = 127
+
+note = 64
+velocity = 100
+hold = 1.5
 
 
 # Function to randomize a parameter's value within its range
@@ -78,6 +91,25 @@ for scene in patch["scene"]:
             if isinstance(param, surgepy.SurgeNamedParamId):
                 random_value = randomize_param(synth, param)
                 synth.setParamVal(param, random_value)
+
+onesec = synth.getSampleRate() / synth.getBlockSize()
+buf = synth.createMultiBlock(int(round(DURATION * onesec)))
+
+chd = [note]
+for n in chd:
+    synth.playNote(0, n, velocity, 0)
+synth.processMultiBlock(buf, 0, int(round(hold * onesec)))
+
+for n in chd:
+    synth.releaseNote(0, n, 0)
+synth.processMultiBlock(buf, int(round((DURATION - hold) * onesec)))
+
+slug = "output.wav"
+# WHY? float round
+sf.write(slug, buf.T, int(round(synth.getSampleRate())))
+# osynth.system(f"oggenc --quality 10 {slug}")
+os.system(f"oggenc -Q {slug} && rm {slug}")
+
 
 ## Save the randomized patch to a file
 # output_path = "/path/to/save/random_patch.fxp"
