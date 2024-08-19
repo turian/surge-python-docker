@@ -32,7 +32,7 @@ def randomize_param(synth, param):
 
 
 # Create a Surge XT instance
-synth = surgepy.createSurge(44100)
+synth = surgepy.createSurge(SR)
 
 # Dynamically retrieve all control group constants
 control_group_constants = {
