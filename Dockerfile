@@ -1,5 +1,5 @@
 # Use Ubuntu 24.04 base image
-FROM ubuntu:24.04
+FROM ubuntu:24.10
 
 # Set environment variables
 ENV LANG=C.UTF-8
