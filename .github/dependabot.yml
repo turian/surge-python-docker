@@ -6,6 +6,8 @@
 version: 2
 updates:
   - package-ecosystem: "" # See documentation for possible values
+    cooldown:
+      default-days: 14
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
